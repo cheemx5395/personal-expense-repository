@@ -130,7 +130,9 @@ func DeleteExpense(cfg *service.Config) http.HandlerFunc {
 			return
 		}
 
+		body, _ := json.Marshal(res)
 		w.WriteHeader(http.StatusOK)
+		w.Write(body)
 	}
 }
 
