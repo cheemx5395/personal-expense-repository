@@ -18,11 +18,16 @@ func main() {
 	r := &mux.Router{}
 	r.Use(middleware.LoggerMiddleware)
 
-	r.HandleFunc("/health", rest.HealthRoute(cfg)).Methods("GET")
-	r.HandleFunc("/expenses", rest.GetExpenses(cfg)).Methods("GET")
-	r.HandleFunc("/expense", rest.CreateExpense(cfg)).Methods("POST")
-	r.HandleFunc("/expense/{id}", rest.DeleteExpense(cfg)).Methods("DELETE")
+	r.HandleFunc("/health", rest.HealthRoute(cfg)).Methods(http.MethodGet)
+	r.HandleFunc("/expenses", rest.GetExpenses(cfg)).Methods(http.MethodGet)
+	r.HandleFunc("/expense", rest.CreateExpense(cfg)).Methods(http.MethodPost)
+	r.HandleFunc("/expense/{id}", rest.GetExpense(cfg)).Methods(http.MethodGet)
+	r.HandleFunc("/expense/{id}", rest.UpdateExpense(cfg)).Methods(http.MethodPut)
+	r.HandleFunc("/expense/{id}", rest.DeleteExpense(cfg)).Methods(http.MethodDelete)
 
-	log.Println("Server is running on port :8080")
-	log.Fatalf("Server crashed: %v", http.ListenAndServe(":8080", r))
+	port := ":8080"
+	log.Printf("Server is running on port %s\n", port)
+	if err := http.ListenAndServe(port, r); err != nil {
+		log.Fatalf("Server Failed: %v", err)
+	}
 }

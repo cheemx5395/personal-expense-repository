@@ -12,26 +12,30 @@ import (
 
 const createExpense = `-- name: CreateExpense :one
 INSERT INTO expenses(
-    remark,
-    amount
+    title,
+    amount,
+    description
 ) VALUES (
-    ?, ?
-) RETURNING id, remark, amount, created_at
+    ?, ?, ?
+) RETURNING id, title, amount, description, created_at, updated_at
 `
 
 type CreateExpenseParams struct {
-	Remark sql.NullString `json:"remark"`
-	Amount int64          `json:"amount"`
+	Title       sql.NullString `json:"title"`
+	Amount      int64          `json:"amount"`
+	Description sql.NullString `json:"description"`
 }
 
 func (q *Queries) CreateExpense(ctx context.Context, arg CreateExpenseParams) (Expense, error) {
-	row := q.db.QueryRowContext(ctx, createExpense, arg.Remark, arg.Amount)
+	row := q.db.QueryRowContext(ctx, createExpense, arg.Title, arg.Amount, arg.Description)
 	var i Expense
 	err := row.Scan(
 		&i.ID,
-		&i.Remark,
+		&i.Title,
 		&i.Amount,
+		&i.Description,
 		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -46,8 +50,26 @@ func (q *Queries) DeleteExpenseByID(ctx context.Context, id int64) error {
 	return err
 }
 
+const getExpenseByID = `-- name: GetExpenseByID :one
+SELECT id, title, amount, description, created_at, updated_at FROM expenses WHERE id = ?
+`
+
+func (q *Queries) GetExpenseByID(ctx context.Context, id int64) (Expense, error) {
+	row := q.db.QueryRowContext(ctx, getExpenseByID, id)
+	var i Expense
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Amount,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getExpenses = `-- name: GetExpenses :many
-SELECT id, remark, amount, created_at FROM expenses
+SELECT id, title, amount, description, created_at, updated_at FROM expenses
 `
 
 func (q *Queries) GetExpenses(ctx context.Context) ([]Expense, error) {
@@ -61,9 +83,11 @@ func (q *Queries) GetExpenses(ctx context.Context) ([]Expense, error) {
 		var i Expense
 		if err := rows.Scan(
 			&i.ID,
-			&i.Remark,
+			&i.Title,
 			&i.Amount,
+			&i.Description,
 			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -76,4 +100,37 @@ func (q *Queries) GetExpenses(ctx context.Context) ([]Expense, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateExpenseByID = `-- name: UpdateExpenseByID :one
+UPDATE expenses
+SET title = ?, amount = ?, description = ?
+WHERE id = ?
+RETURNING id, title, amount, description, created_at, updated_at
+`
+
+type UpdateExpenseByIDParams struct {
+	Title       sql.NullString `json:"title"`
+	Amount      int64          `json:"amount"`
+	Description sql.NullString `json:"description"`
+	ID          int64          `json:"id"`
+}
+
+func (q *Queries) UpdateExpenseByID(ctx context.Context, arg UpdateExpenseByIDParams) (Expense, error) {
+	row := q.db.QueryRowContext(ctx, updateExpenseByID,
+		arg.Title,
+		arg.Amount,
+		arg.Description,
+		arg.ID,
+	)
+	var i Expense
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Amount,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

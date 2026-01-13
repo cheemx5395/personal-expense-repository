@@ -1,9 +1,11 @@
 -- +goose Up
 CREATE TABLE expenses(
     id INTEGER PRIMARY KEY,
-    remark TEXT,
+    title TEXT,
     amount INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- +goose Down

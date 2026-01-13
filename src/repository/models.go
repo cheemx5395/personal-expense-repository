@@ -6,11 +6,14 @@ package repository
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Expense struct {
-	ID        int64          `json:"id"`
-	Remark    sql.NullString `json:"remark"`
-	Amount    int64          `json:"amount"`
-	CreatedAt sql.NullTime   `json:"created_at"`
+	ID          int64          `json:"id"`
+	Title       sql.NullString `json:"title"`
+	Amount      int64          `json:"amount"`
+	Description sql.NullString `json:"description"`
+	CreatedAt   sql.NullTime   `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 }
