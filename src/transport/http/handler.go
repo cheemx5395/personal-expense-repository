@@ -130,7 +130,14 @@ func DeleteExpense(cfg *service.Config) http.HandlerFunc {
 			return
 		}
 
+		rep := struct {
+			Message string `json:"message"`
+		}{
+			Message: "Expense deleted successfully!",
+		}
+		body, _ := json.Marshal(rep)
 		w.WriteHeader(http.StatusOK)
+		w.Write(body)
 	}
 }
 
