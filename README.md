@@ -14,6 +14,19 @@ The project is designed to be minimal, readable, and production-oriented while d
 
 SQLite was chosen for simplicity since this is a small, single-node application. The design remains portable to other databases like PostgreSQL with minimal changes.
 
+## Expense Schema 
+- Note: Since this is simple CRUD on Expense their is no specific ER Diagram necessary
+```go
+type Expense struct {
+	ID          int64          `json:"id"`
+	Title       sql.NullString `json:"title"`
+	Amount      int64          `json:"amount"`
+	Description sql.NullString `json:"description"`
+	CreatedAt   sql.NullTime   `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+}
+```
+
 ## Features
 
 * Health check endpoint
@@ -26,7 +39,6 @@ SQLite was chosen for simplicity since this is a small, single-node application.
 ```bash
 # First migrate the database to 1st version
 make migrationUp
-c443b5426362ddf39cded313228eb30b7676e3f2
 # Start the server
 make server
 
