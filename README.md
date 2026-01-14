@@ -228,6 +228,4 @@ A Postman collection containing all API requests is available here:
 **Postman Collection Link**: [collection](https://warped-meadow-913182.postman.co/workspace/New-Team-Workspace~850b93a7-4078-4f7e-bcb5-331e137d6e73/collection/32759292-3a085ffd-da7c-4fc0-9cb0-e0c40c1b78ac?action=share&source=copy-link&creator=32759292)
 
 ## Conclusion
-
-Kept it as simple as possible since the assignment doesn't specify anything more!
->>>>>>> Stashed changes
+HTTP Part of the assignment is completed, will work on the CLI feature once I get some free time
